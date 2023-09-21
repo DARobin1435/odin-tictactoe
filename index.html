@@ -14,11 +14,27 @@
 
     <div class="container">
 
-    <div class="player-list">
-        <div class="player-name player-1 is-turn-player">Player 1: <span></span></div>
-        <div class="player-name player-2">Player 2: <span></span></div>
-    </div>
+    <!-- Complete details in detail. Submit them and enter game screen -->
+        <div class="welcome-screen">
+            <h3>Play a round of Tic-Tac-Toe or Else!!</h3>
+            <label for="name-input">Begin by entering your name</label>
+            <input type="name-input" id="name-input">
+            <button type="button" class="start-game-button">Start Game</button>
+        </div>
+    <!-- Only visible at the end of each round after winner is declared -->
+        <dialog class="winner-dialog">
+            <p></p><span></span> is the winner!</p>
+            <a href="#">Play Again?</a>
+        </dialog>
+    <!-- Containers all the game details  -->
         <div class="game-container">
+            <button type="button" class="reset-game-button">Reset Game</button>    
+            <div class="player-list">
+                <div class="player-name player-1">Player 1: <span></span></div>
+                <div class="player-name player-2">Player 2: <span></span></div>
+            </div>
+            <div class="game-board">
+            </div>
         </div>
     </div>
 

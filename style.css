@@ -28,6 +28,20 @@
     justify-content: center;
     align-items: center;
 }
+.container .reset-game-button{
+
+    border: none;
+    background-color: lightskyblue;
+    margin: 10px;
+    color: white;
+    font-size: 1.15em;
+    padding: 5px 12px;
+    border-radius: 6px;;
+    
+}
+.container .reset-game:hover{
+    background-color: rebeccapurple;
+}
 .player-list{
     display: flex;
     justify-content: center;
@@ -38,17 +52,69 @@
     padding: 4px;
     border: 3px solid white;
 }
-.player-name:hover{
+.is-turn-player{
     
     border-radius: 6px;
     border: 3px solid goldenrod;
 }
-.game-container{
+.winner-dialog{
 
+    position: absolute;
+    margin: 0 auto;
+}
+.welcome-screen{
+    /* visibility:hidden; */
+    visibility: visible;
+    background-color:cornflowerblue;
+    height: 400px;
+    padding: 60px;
+    border-radius: 6px;
+    color: white;
+}
+.welcome-screen>*{
+
+    margin: 10px;
+}
+.welcome-screen>input{
+
+    height: 25px;
+    border-radius: 6px;
+    border: none;
+    padding: 4px;
+}
+.welcome-screen>input:hover{
+
+    box-shadow: 3px 2px 20px gray;
+}
+/* .welcome-screen>input:focus{
+
+    border: 1px solid lightgreen;
+} */
+.welcome-screen>button{
+
+    display: block;
+    border: none;
+    padding: 10px 25px;
+    background-color: rgb(33, 175, 33);
+    border-radius: 6px;
+}
+.welcome-screen>button:hover{
+
+    color: white;
+    cursor: pointer;
+
+}
+.game-container{
+    /* visibility: hidden; */
+    display: none;
+    flex-flow: column;
+    align-items: center;
+
+}
+.game-board{
     display: grid;
     grid-template: repeat(3, 100px) / repeat(3, 100px);
 }
-
 .game-square-container{
 
     padding: 40px;
