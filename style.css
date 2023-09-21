@@ -11,7 +11,7 @@
 }
 .brand{
 
-    padding: 20px;
+    padding: 10px;
     font-size: 1.25em;
     color: white;
     display: flex;
@@ -57,16 +57,49 @@
     border-radius: 6px;
     border: 3px solid goldenrod;
 }
+.no-winner-dialog,
 .winner-dialog{
 
     position: absolute;
+    top: 65px;
+    border: 6px solid orange;
+    border-radius: 6px;
     margin: 0 auto;
+    height: 300px;
+    width: 300px;
+}
+.no-winner-dialog>p,
+.winner-dialog>p{
+
+    font-size: 1.15em;
+    padding: 10px;
+}
+.no-winner-dialog>*,
+.winner-dialog>*{
+
+    margin: 30px;
+}
+.no-winner-dialog>a,
+.winner-dialog>a{
+
+    text-decoration: none;
+    color: white;
+    border-radius: 6px;
+    padding: 15px;
+    background-color: steelblue;
+    position: relative;
+    left: 30px;
+}
+.no-winner-dialog>a:hover,
+.winner-dialog>a:hover{
+
+    background-color: royalblue;
 }
 .welcome-screen{
     /* visibility:hidden; */
     visibility: visible;
     background-color:cornflowerblue;
-    height: 400px;
+    height: 300px;
     padding: 60px;
     border-radius: 6px;
     color: white;
@@ -123,16 +156,20 @@
     text-align: center;
     font-size: 1.45em;
     font-weight: 700;
+    color: steelblue;
 }
 
-.game-square{
+.new-game-button{
 
-    border: none;
+    color: maroon;
     background-color: white;
-    
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    margin: 10px 0 0 0;
 }
-
-.game-square>*{
-
-     text-align: center;
+.new-game-button:hover{
+    background-color: maroon;
+    color: white;
+    cursor: pointer;
 }

@@ -18,23 +18,30 @@
         <div class="welcome-screen">
             <h3>Play a round of Tic-Tac-Toe or Else!!</h3>
             <label for="name-input">Begin by entering your name</label>
-            <input type="name-input" id="name-input">
+            <input type="name-input" class="name-input" id="name-input">
             <button type="button" class="start-game-button">Start Game</button>
         </div>
     <!-- Only visible at the end of each round after winner is declared -->
         <dialog class="winner-dialog">
-            <p></p><span></span> is the winner!</p>
-            <a href="#">Play Again?</a>
+            <p><span class="winner-name"></span> is the winner!</p>
+            <p><span class="winner-name"></span> has <span class="player-wins"></span> wins!</p>
+            <a href="#" class="reset-game-button">Play Again?</a>
+        </dialog>
+    <!-- Only visible if board is full AND no winner is declared -->
+        <dialog class="no-winner-dialog">
+            <p>It's a tie!</p>
+            <a href="#" class="reset-game-button">Play Again?</a>
         </dialog>
     <!-- Containers all the game details  -->
         <div class="game-container">
-            <button type="button" class="reset-game-button">Reset Game</button>    
+            <!-- <button type="button" class="reset-game-button">Reset Game</button>     -->
             <div class="player-list">
                 <div class="player-name player-1">Player 1: <span></span></div>
                 <div class="player-name player-2">Player 2: <span></span></div>
             </div>
             <div class="game-board">
             </div>
+            <button class="new-game-button"> Start Over? </button>
         </div>
     </div>
 

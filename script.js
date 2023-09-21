@@ -7,16 +7,30 @@
 const GameBoard = (() =>{
     // Array representing the various positions in 3x3
     const board = [];
-    // Reset button
-    const resetGameButton = document.querySelector(".reset-game-button");
-    resetGameButton.addEventListener("click", ()=>{
-        gameContainer.innerHTML = "";
+    function resetGame (){
+        gameBoard.innerHTML = "";
+        winnerDialog.close();
+        noWinnerDialog.close();
         player1.resetClaimedPositions();
         player1.resetIsWinner();
         player2.resetClaimedPositions();
         player2.resetIsWinner();
-
         makeGameBoard();
+    }
+    // FUNCTION: To reset game by clearing the board and reset object values
+    // Give all elements with class reset-game-button reset functionality
+    const resetGameButtons = document.querySelectorAll(".reset-game-button");
+    resetGameButtons.forEach(button =>{
+        button.addEventListener("click", ()=>{
+            resetGame();
+        })
+    })
+    // FUNCTION: reset the game completely
+    const startOverButton = document.querySelector(".new-game-button");
+    startOverButton.addEventListener("click", ()=>{
+        resetGame();
+        player1.resetTotalWins();
+        player2.resetTotalWins();
     })
     // Define Position object
     let Position = (num) =>{
@@ -27,13 +41,9 @@ const GameBoard = (() =>{
         board.push(Position(i));
     }
     
-    const updateBoardArray = (mrkr)=>{
-        board.push(mrkr);
-    }
     // Function to remove click listener after game is over
     const removeClickListeners = ()=>{
-        Array.from(gameContainer.children).forEach(child =>{
-            console.log("Square child")
+        Array.from(gameBoard.children).forEach(child =>{
             child.removeEventListener("click", ()=>{;
             console.log("Remove click listener")
             })
@@ -50,9 +60,12 @@ const GameBoard = (() =>{
     const showGameContainer = ()=>{
         setTimeout(()=>{
             gameContainer.style.display = "flex";
-        }, 500)
+        }, 200)
         
     }
+    // MODALS -> for winner and loser
+    const winnerDialog = document.querySelector(".winner-dialog");
+    const noWinnerDialog = document.querySelector(".no-winner-dialog");
     const makeGameBoard = ()=>{
 
         // Checks the data-position attribute of the clicked object
@@ -71,7 +84,6 @@ const GameBoard = (() =>{
         board.forEach(position =>{
             
             let squareContainer = document.createElement("div");
-            let square = document.createElement("a");
             squareContainer.classList.add("game-square-container");
             squareContainer.setAttribute("data-position", position.position);
 
@@ -91,43 +103,60 @@ const GameBoard = (() =>{
                     }
                     
                     currentPosition = currentTarget.getAttribute("data-position");
-                    
                     turnPlayer.setClaimedPositions(parseInt(currentPosition));
                     currentTarget.innerText = turnPlayer.marker;
                     Game.changeTurns();
-                    // updateDisplay();
-                    if (turnPlayer.claimedPositions.length >= 3){
-                        winnerDeclared = Game.checkWinner(turnPlayer);
-                    }
-                    if (winnerDeclared){
-                        alert(`${turnPlayer.name} is winner!`);
-                        removeClickListeners();
-                        return;
-                    }else{
-                        console.log(`${turnPlayer.name
-                        } captured position ${currentPosition} with ${turnPlayer.marker}`)
-    
-                    }
+                    updateDisplay();
+
+                    if (player1.claimedPositions.length + player2.claimedPositions.length < 9){
+                        if (turnPlayer.claimedPositions.length >= 3){
+                            winnerDeclared = Game.checkWinner(turnPlayer);
+                        }
+                        if (winnerDeclared){
+                            removeClickListeners();
+                            document.querySelectorAll(".winner-dialog .winner-name").forEach(name =>{
+                                name.innerText = turnPlayer.name;
+                                }
+                            )
+                            document.querySelector(".winner-dialog .player-wins").innerText = turnPlayer.totalWins;
+                            winnerDialog.showModal();
+                            return;
+                        }else{
+                            console.log(`${turnPlayer.name
+                            } captured position ${currentPosition} with ${turnPlayer.marker}`)
+        
+                        }
+                    }else if (player1.claimedPositions.length + player2.claimedPositions.length == 9){
                         
+                        winnerDeclared = Game.checkWinner(turnPlayer);
+                        if(winnerDeclared){
+                            winnerDialog.showModal();
+                        }
+                        if(!winnerDeclared){
+                            noWinnerDialog.showModal();
+                        }
+                    }
+    
                 }
-                
             })
 
             gameBoard.appendChild(squareContainer);
         })    
     }
+    // Empty board
+    // board.splice(0,board.length-1);
     return { get board(){return board},
     showGameContainer,
     makeGameBoard }
 })();
 
 // Player object takes a name and a selected marker
-let Player = (name) =>{
+let Player = (name, marker) =>{
 
     let isTurnPlayer = false;
-    let marker;
     let claimedPositions = [];
     let isWinner = false;
+    let totalWins = 0;
     const setIsTurnPlayer = () =>{
         isTurnPlayer = true;
     }
@@ -147,6 +176,12 @@ let Player = (name) =>{
     const resetIsWinner = ()=>{
         isWinner = false;
     }
+    const setTotalWins = ()=>{
+        totalWins++;
+    }
+    const resetTotalWins = ()=>{
+        totalWins = 0;
+    }
     return {name, marker, resetClaimedPositions,
         setIsTurnPlayer,
         resetIsTurnPlayer, 
@@ -155,50 +190,48 @@ let Player = (name) =>{
         get claimedPositions() {return claimedPositions},
         setIsWinner,
         resetIsWinner,
-        get isWinner() {return isWinner}
+        get isWinner() {return isWinner},
+        setTotalWins,
+        resetTotalWins,
+        get totalWins() {return totalWins}
     }
 }
 // Create players
-let player1 = Player("Kaaaaaaaaaaaa");
-let player2 = Player("Laaaaaaaaaaaa");
+let player1 = Player("Kaaaaaaaaaaaa", "X");
+let player2 = Player("Laaaaaaaaaaaa", "O");
 
 
-const Game = ((players) => {
-    // Welcome functionality
+const Game = (() => {
+    // Welcome Screen functionality
     const startGameButton = document.querySelector(".start-game-button");
     const nameInput = document.querySelector(".name-input");
     const welcomeScreen = document.querySelector(".welcome-screen");
+    const message = "You need to add a name here";
+    // let player1, player2;
     startGameButton.addEventListener("click", ()=>{
-
-        welcomeScreen.innerHTML = "";
-        welcomeScreen.classList.remove("welcome-screen");
-        GameBoard.showGameContainer();
+        // Clear welcome screen and show game container
+        if (nameInput.value){
+            welcomeScreen.innerHTML = "";
+            welcomeScreen.classList.remove("welcome-screen");
+            startGame();
+            GameBoard.showGameContainer();
+            
+        }else{
+            nameInput.placeholder = message;
+        }
     })
 
     // Choose the first player randomly at start of game
   
-    const startGame = (() => {
-
-        let chosenPlayer = players[Math.floor(Math.random() * 2)];
-        let otherPlayer;
-        chosenPlayer.setIsTurnPlayer();
-        chosenPlayer.marker = "X";
-        // If not, put chosenPlayer in first position of array
-        // In both cases, set the marker property of the other to "O"
-        if (chosenPlayer == players[0]){
-            otherPlayer = players[1]
-            otherPlayer.marker = "O";
-        } else{
-            otherPlayer = players[0]
-            otherPlayer.marker = "O";
-            players.shift();
-            players.push(otherPlayer)
-        }
-    })();
+    const startGame = () => {
+        // Set name values for both players and then add to display
+        player1 = Player(nameInput.value, "X");
+        player1.setIsTurnPlayer();
+        player2 = Player("Laaaaa", "O");
+        updateDisplay();
+    };
 
     const changeTurns = () => {
-        // Destructure the player Array
-        let [ player1, player2 ] = players;
         // Check which is turn player and then reverse those states 
         if (player1.isTurnPlayer) {
             player1.resetIsTurnPlayer();
@@ -210,7 +243,6 @@ const Game = ((players) => {
     }
 
     const checkWinner = (player) =>{
-        
         const winCombos = [
             [1,2,3],
             [4,5,6],
@@ -226,17 +258,15 @@ const Game = ((players) => {
         const runCombinations = (()=> {
 
             for (combo of winCombos){
-                if (!player.isWinner){
-                    let counter = 0;
-                    for (item of combo){
-                        for (pos of player.claimedPositions){
-                            if (item == pos){
-                                counter++;
-                            }
-                            if (counter == 3){
-                                player.setIsWinner();
-                                return
-                            }
+                
+                let counter = 0;
+                for (item of combo){
+                    for (pos of player.claimedPositions){
+                        if (item == pos){
+                            counter++;
+                        }
+                        if (counter == 3){
+                            player.setIsWinner();
                         }
                     }
                 }
@@ -245,34 +275,38 @@ const Game = ((players) => {
         })();
 
         if (player.isWinner) {
+            player.setTotalWins();
             return true;
         }
-        
+        console.log(`No winner declared`);
         return false;
     }
 
-    return { changeTurns, checkWinner }
+    return {
+        startGame, 
+        changeTurns, 
+        checkWinner }
     
-})([player1, player2]);
+})();
 
-const updateDisplay = ()=>{
+const updateDisplay = () =>{
 
     const player1Div = document.querySelector(".player-list .player-name.player-1>span");
     const player2Div = document.querySelector(".player-list .player-name.player-2>span");
-    
-    player1Div.innerText = player1.name;
-    player2Div.innerText = player2.name;
-    
-    if (player1.isTurnPlayer){
-        player1Div.classList.toggle("is-turn-player");
-        player2Div.classList.toggle("is-turn-player");
-    }else{
-        player1Div.classList.toggle("is-turn-player");
-        player2Div.classList.toggle("is-turn-player");
+    if(player1 && player2){
+        player1Div.innerText = player1.name;
+        player2Div.innerText = player2.name;
+        
+        if (player1.isTurnPlayer){
+            player1Div.classList.add("is-turn-player");
+            player2Div.classList.remove("is-turn-player");
+        }else{
+            player1Div.classList.remove("is-turn-player");
+            player2Div.classList.add("is-turn-player");
+        }
     }
 
     const resetGameBoard = ()=>{
-
         GameBoard.makeGameBoard();
     };
 
@@ -282,5 +316,4 @@ const updateDisplay = ()=>{
 }
 
 // Function calls
-updateDisplay();
 GameBoard.makeGameBoard();
